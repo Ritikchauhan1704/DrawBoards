@@ -11,8 +11,13 @@
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.5",
+    "clsx": "^2.1.1",
+    "konva": "^9.3.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-konva": "^18.2.10",
+    "react-router-dom": "^6.23.1",
+    "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

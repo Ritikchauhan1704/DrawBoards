@@ -44,7 +44,7 @@ const SideBar = () => {
 
   const onExportClick = useCallback(() => {
     const dataUri = stageRef?.current?.toDataURL({pixelRatio: 3});
-    downloadURI(dataUri, 'image.png');
+    downloadURI(dataUri, 'project.png');
   }, [stageRef]);
 
   return (

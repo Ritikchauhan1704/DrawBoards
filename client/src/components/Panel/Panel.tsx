@@ -34,7 +34,7 @@ const Panel = () => {
         </button>
         
         {/* Tool panel */}
-        <div className="flex border shadow-md py-1 px-2 justify-center items-center w-fit mx-auto rounded-lg gap-1">
+        <div className="flex border shadow-md py-1 px-2 justify-center items-center w-fit mx-auto rounded-lg gap-1 bg-white">
           <Tool icon={Cursor} onClick={() => updateAction('Cursor')} />
           <Tool icon={Rectangle} onClick={() => updateAction('Rectangle')} />
           <Tool icon={Diamond} onClick={() => updateAction('Diamond')} />

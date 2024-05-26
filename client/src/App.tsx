@@ -6,17 +6,31 @@ import {
   Rect,
   Stage,
   Transformer,
+  Circle as KonvaCircle,
+  Line as KonvaLine,
 } from 'react-konva';
 import {Panel} from './components';
 import {useExportImage, useImportImage, useToolStore} from './store/store';
 import {useCallback, useRef, useState} from 'react';
-import {Arrow, Rectangle} from './CanvaTypes/CanvaTypes';
+import {
+  Arrow,
+  Circle,
+  Line,
+  Rectangle,
+  Scribble,
+} from './CanvaTypes/CanvaTypes';
 import {v4 as uuidv4} from 'uuid';
 import {KonvaEventObject} from 'konva/lib/Node';
+import {cn} from './libs/utils';
 function App() {
   const [arrows, setArrows] = useState<Arrow[]>([]);
   const [rect, setRect] = useState<Rectangle[]>([]);
+  const [circles, setCircles] = useState<Circle[]>([]);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [scribbles, setScribbles] = useState<Scribble[]>([]);
+
   const [color, setColor] = useState('#000');
+  const [cursor, setCursor] = useState('');
 
   const action = useToolStore((stage) => stage.action);
   const updateAction = useToolStore((stage) => stage.updateAction);
@@ -78,10 +92,32 @@ function App() {
       case 'Diamond':
         break;
       case 'Circle':
+        setCircles((prevCircle) => [
+          ...prevCircle,
+          {
+            id,
+            radius: 1,
+            x,
+            y,
+            color,
+          },
+        ]);
         break;
       case 'Minus':
+        setLines((prevLines) => [
+          ...prevLines,
+          {
+            id,
+            points: [x, y, x, y],
+            color,
+          },
+        ]);
         break;
       case 'PencilSimpleLine':
+        setScribbles((prevScribble) => [
+          ...prevScribble,
+          {id, color, points: [x, y]},
+        ]);
         break;
       case 'TextAa':
         break;
@@ -122,10 +158,38 @@ function App() {
       case 'Diamond':
         break;
       case 'Circle':
+        setCircles((prevCircles) =>
+          prevCircles.map((prevCircle) =>
+            prevCircle.id === id
+              ? {
+                  ...prevCircle,
+                  radius:
+                    ((x - prevCircle.x) ** 2 + (y - prevCircle.y) ** 2) ** 0.5,
+                }
+              : prevCircle
+          )
+        );
         break;
       case 'Minus':
+        setLines((prevLines) =>
+          prevLines.map((prevLine) =>
+            prevLine.id === id
+              ? {
+                  ...prevLine,
+                  points: [prevLine.points[0], prevLine.points[1], x, y],
+                }
+              : prevLine
+          )
+        );
         break;
       case 'PencilSimpleLine':
+        setScribbles((prevScibbles) =>
+          prevScibbles.map((prevScibble) =>
+            prevScibble.id === id
+              ? {...prevScibble, points: [...prevScibble.points, x, y]}
+              : prevScibble
+          )
+        );
         break;
       case 'TextAa':
         break;
@@ -143,10 +207,19 @@ function App() {
     },
     [action]
   );
+  const onBgClick = useCallback(() => {
+    transformerRef?.current?.nodes([]);
+  }, []);
 
   return (
-    <div className=" flex relative h-screen w-screen">
-      <Panel />
+    <div
+      className={cn('flex relative h-screen w-screen', {
+        'cursor-crosshair': action != 'Cursor',
+      })}
+    >
+      <div onClick={onBgClick}>
+        <Panel />
+      </div>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -156,13 +229,14 @@ function App() {
         onMouseMove={onStageMouseMove}
       >
         <Layer>
-          <Rect
+          <KonvaRect
             x={0}
             y={0}
             width={window.innerWidth}
             height={window.innerHeight}
             fill="white"
             id="bg"
+            onClick={onBgClick}
           />
           {image && (
             <Image
@@ -172,6 +246,7 @@ function App() {
               height={image.height}
               width={image.width}
               draggable={isDraggable}
+              onClick={onShapeClick}
             />
           )}
           {arrows.map((arrow) => (
@@ -198,6 +273,44 @@ function App() {
               strokeWidth={3}
               draggable={isDraggable}
               onClick={onShapeClick}
+            />
+          ))}
+          {circles.map((circle) => (
+            <KonvaCircle
+              key={circle.id}
+              id={circle.id}
+              x={circle.x}
+              y={circle.y}
+              radius={circle.radius}
+              stroke={circle.color}
+              strokeWidth={3}
+              draggable={isDraggable}
+              onClick={onShapeClick}
+            />
+          ))}
+          {lines.map((line) => (
+            <KonvaLine
+              key={line.id}
+              id={line.id}
+              points={line.points}
+              fill={line.color}
+              stroke={line.color}
+              strokeWidth={3}
+              draggable={isDraggable}
+              onClick={onShapeClick}
+            />
+          ))}
+          {scribbles.map((scribble) => (
+            <KonvaLine
+              key={scribble.id}
+              id={scribble.id}
+              lineCap="round"
+              lineJoin="round"
+              stroke={scribble.color}
+              strokeWidth={4}
+              points={scribble.points}
+              onClick={onShapeClick}
+              draggable={isDraggable}
             />
           ))}
 

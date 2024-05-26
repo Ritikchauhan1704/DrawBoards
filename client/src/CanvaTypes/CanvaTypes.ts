@@ -25,3 +25,6 @@ export type Scribble = Shape & {
 export type Arrow = Shape & {
   points: [number, number, number, number];
 };
+export type Line = Shape & {
+  points: [number, number, number, number];
+};

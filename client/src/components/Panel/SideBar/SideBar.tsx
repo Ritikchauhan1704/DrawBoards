@@ -54,7 +54,6 @@ const SideBar = () => {
           type="file"
           ref={fileRef}
           className="hidden"
-          // style={{display:"none"}}
           onChange={onImportImage}
         />
         <button

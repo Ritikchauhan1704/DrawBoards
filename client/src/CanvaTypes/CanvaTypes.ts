@@ -28,3 +28,6 @@ export type Arrow = Shape & {
 export type Line = Shape & {
   points: [number, number, number, number];
 };
+export type Text = Shape & {
+  text: string;
+};

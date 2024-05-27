@@ -3,34 +3,36 @@ import {
   Rect as KonvaRect,
   Image,
   Layer,
-  Rect,
   Stage,
   Transformer,
   Circle as KonvaCircle,
   Line as KonvaLine,
+  Text as KonvaText,
 } from 'react-konva';
 import {Panel} from './components';
 import {useExportImage, useImportImage, useToolStore} from './store/store';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Arrow,
   Circle,
   Line,
   Rectangle,
   Scribble,
+  Text,
 } from './CanvaTypes/CanvaTypes';
 import {v4 as uuidv4} from 'uuid';
 import {KonvaEventObject} from 'konva/lib/Node';
 import {cn} from './libs/utils';
+
 function App() {
   const [arrows, setArrows] = useState<Arrow[]>([]);
   const [rect, setRect] = useState<Rectangle[]>([]);
   const [circles, setCircles] = useState<Circle[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [scribbles, setScribbles] = useState<Scribble[]>([]);
+  const [texts, setTexts] = useState<Text[]>([]);
 
   const [color, setColor] = useState('#000');
-  const [cursor, setCursor] = useState('');
 
   const action = useToolStore((stage) => stage.action);
   const updateAction = useToolStore((stage) => stage.updateAction);
@@ -51,8 +53,9 @@ function App() {
 
   const onStageMouseUp = useCallback(() => {
     isDraw.current = false;
+    if (action === 'PencilSimpleLine') return;
     updateAction('Cursor');
-  }, [updateAction]);
+  }, [updateAction, action]);
 
   const currentShapeRef = useRef<string>();
 
@@ -119,12 +122,19 @@ function App() {
           {id, color, points: [x, y]},
         ]);
         break;
-      case 'TextAa':
+      case 'TextAa': {
+        const text:string = prompt('Type here');
+        setTexts((prevTexts) => [
+          ...prevTexts,
+          {id, x, y, color, text:text},
+        ]);
+        onStageMouseUp();
         break;
+      }
       case 'Eraser':
         break;
     }
-  }, [action, color]);
+  }, [action, color,onStageMouseUp]);
 
   const onStageMouseMove = useCallback(() => {
     if (action === 'Cursor' || !isDraw.current) return;
@@ -199,6 +209,7 @@ function App() {
   }, [action]);
 
   const transformerRef = useRef<any>(null);
+
   const onShapeClick = useCallback(
     (e: KonvaEventObject<MouseEvent>) => {
       if (action !== 'Cursor') return;
@@ -207,9 +218,22 @@ function App() {
     },
     [action]
   );
+
+  const onClear = useCallback(() => {
+    setRect([]);
+    setCircles([]);
+    setScribbles([]);
+    setArrows([]);
+    setLines([]);
+    setTexts([]);
+  }, []);
+
   const onBgClick = useCallback(() => {
     transformerRef?.current?.nodes([]);
   }, []);
+  useEffect(() => {
+    if (action === 'Eraser') onClear();
+  }, [action, onClear]);
 
   return (
     <div
@@ -313,7 +337,18 @@ function App() {
               draggable={isDraggable}
             />
           ))}
-
+          {texts.map((text) => (
+            <KonvaText
+              key={text.id}
+              id={text.id}
+              text={text.text}
+              x={text.x}
+              y={text.y}
+              fontSize={15}
+              draggable={isDraggable}
+              onClick={onShapeClick}
+            />
+          ))}
           <Transformer ref={transformerRef} />
         </Layer>
       </Stage>

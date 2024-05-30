@@ -31,3 +31,7 @@ export type Line = Shape & {
 export type Text = Shape & {
   text: string;
 };
+export type Eraser = {
+  x: number;
+  y: number;
+};

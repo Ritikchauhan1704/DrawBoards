@@ -9,20 +9,28 @@ import {
   Line as KonvaLine,
   Text as KonvaText,
 } from 'react-konva';
-import {Panel} from './components';
-import {useExportImage, useImportImage, useToolStore} from './store/store';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {KonvaEventObject} from 'konva/lib/Node';
+import {CreateRoom, JoinRoom, Panel} from './components';
+import {
+  useExportImage,
+  useImportImage,
+  useRoom,
+  useToolStore,
+} from './store/store';
+import {useCallback, useRef, useState} from 'react';
 import {
   Arrow,
   Circle,
+  Eraser,
   Line,
   Rectangle,
   Scribble,
   Text,
 } from './CanvaTypes/CanvaTypes';
 import {v4 as uuidv4} from 'uuid';
-import {KonvaEventObject} from 'konva/lib/Node';
 import {cn} from './libs/utils';
+import {Toaster} from 'react-hot-toast';
+import { X } from '@phosphor-icons/react';
 
 function App() {
   const [arrows, setArrows] = useState<Arrow[]>([]);
@@ -31,6 +39,7 @@ function App() {
   const [lines, setLines] = useState<Line[]>([]);
   const [scribbles, setScribbles] = useState<Scribble[]>([]);
   const [texts, setTexts] = useState<Text[]>([]);
+  const [eraserPoints, setEraserPoints] = useState<Eraser[]>([]);
 
   const [color, setColor] = useState('#000');
 
@@ -123,18 +132,16 @@ function App() {
         ]);
         break;
       case 'TextAa': {
-        const text:string = prompt('Type here');
-        setTexts((prevTexts) => [
-          ...prevTexts,
-          {id, x, y, color, text:text},
-        ]);
+        const text: string = prompt('Type here');
+        setTexts((prevTexts) => [...prevTexts, {id, x, y, color, text: text}]);
         onStageMouseUp();
         break;
       }
       case 'Eraser':
+        setEraserPoints([{x, y}]);
         break;
     }
-  }, [action, color,onStageMouseUp]);
+  }, [action, color, onStageMouseUp]);
 
   const onStageMouseMove = useCallback(() => {
     if (action === 'Cursor' || !isDraw.current) return;
@@ -201,12 +208,13 @@ function App() {
           )
         );
         break;
-      case 'TextAa':
-        break;
       case 'Eraser':
+        setEraserPoints((prev) => [...prev, {x, y}]);
+        console.log(eraserPoints);
+
         break;
     }
-  }, [action]);
+  }, [action, eraserPoints]);
 
   const transformerRef = useRef<any>(null);
 
@@ -228,12 +236,11 @@ function App() {
     setTexts([]);
   }, []);
 
+  const room = useRoom((stage) => stage.room);
+  const updateRoom = useRoom((stage) => stage.updateRoom);
   const onBgClick = useCallback(() => {
     transformerRef?.current?.nodes([]);
   }, []);
-  useEffect(() => {
-    if (action === 'Eraser') onClear();
-  }, [action, onClear]);
 
   return (
     <div
@@ -352,6 +359,17 @@ function App() {
           <Transformer ref={transformerRef} />
         </Layer>
       </Stage>
+      {room && (
+        <div className="absolute top-36 right-80  h-[70%] w-1/2 flex flex-col border shadow-md py-1 px-2 justify-center items-center mx-auto rounded-lg bg-white">
+          <button className='absolute top-5 right-5' onClick={()=>updateRoom(null)}>
+            <X size={20} />
+          </button>
+
+
+          {room == 'Join' ? <JoinRoom /> : <CreateRoom />}
+        </div>
+      )}
+      <Toaster />
     </div>
   );
 }

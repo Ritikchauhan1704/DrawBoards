@@ -9,7 +9,12 @@ import {
 } from 'react-router-dom';
 
 const router = createBrowserRouter(
-  createRoutesFromElements(<Route path="/" element={<App />} />)
+  createRoutesFromElements(
+    <Route path="/">
+      <Route path="" element={<App />} />
+      <Route path="/:id" element={<App />} />
+    </Route>
+  )
 );
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

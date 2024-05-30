@@ -9,7 +9,7 @@ import {
 } from '@phosphor-icons/react';
 import {useCallback, useRef} from 'react';
 import {Link} from 'react-router-dom';
-import {useExportImage, useImportImage} from '../../../store/store';
+import {useExportImage, useImportImage, useRoom} from '../../../store/store';
 
 const SideBar = () => {
   const updateImage = useImportImage((state) => state.updateImage);
@@ -47,6 +47,8 @@ const SideBar = () => {
     downloadURI(dataUri, 'project.png');
   }, [stageRef]);
 
+  // const liveCollab = useCallback(() => {}, []);
+  const updateRoom=useRoom(stage=>stage.updateRoom)
   return (
     <div className="absolute z-10 flex flex-col border shadow-md rounded-lg w-[75%] sm:w-[50%] md:w-[35%] lg:w-[20%] items-start p-4 m-3 bg-white">
       <div className="flex w-full">
@@ -64,13 +66,26 @@ const SideBar = () => {
           Import Image
         </button>
       </div>
-      <button className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md" onClick={onExportClick}>
+      <button
+        className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md"
+        onClick={onExportClick}
+      >
         <DownloadSimple size={20} />
         Export Image
       </button>
-      <button className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md my-1">
+      <button
+        className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md my-1"
+        onClick={()=>updateRoom("Join")}
+      >
         <Users size={20} />
-        Live collaboration
+        JoinRoom
+      </button>
+      <button
+        className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md my-1"
+        onClick={()=>updateRoom("Create")}
+      >
+        <Users size={20} />
+        CreateRoom
       </button>
       <button className="flex justify-start items-center gap-6 hover:bg-[#F1F0FF] w-full p-2 rounded-md my-1">
         <Trash size={20} />

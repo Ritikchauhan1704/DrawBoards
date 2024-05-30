@@ -11,10 +11,10 @@ import {
   TextAa,
 } from '@phosphor-icons/react';
 import Tool from './Tool';
-import {useToolStore} from '../../store/store';
 import {useState} from 'react';
 import SideBar from './SideBar/SideBar';
-import {cn} from '../../libs/utils';
+import { cn } from '../../libs/utils';
+import { useToolStore } from '../../store/store';
 
 const Panel = () => {
   const updateAction = useToolStore((state) => state.updateAction);

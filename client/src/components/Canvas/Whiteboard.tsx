@@ -11,51 +11,20 @@ import {
   Text as KonvaText,
 } from 'react-konva';
 import {
-  useCanvasData,
-  // useCanvasData,
   useExportImage,
   useImportImage,
   useToolStore,
 } from '../../store/store';
 import {KonvaEventObject} from 'konva/lib/Node';
 import {v4 as uuidv4} from 'uuid';
-import {AllShapes} from '../../CanvaTypes/CanvaTypes';
+// import {AllShapes} from '../../CanvaTypes/CanvaTypes';
 import socket from '../../socket/socket';
 
-const Whiteboard = () => {
+const Whiteboard = ({allShapes,setAllShapes}) => {
   const [color, setColor] = useState('#000');
 
   // const data=useCanvasData(stage=>stage.data)
   // giving ref to stage and storing it in store for use in other compnent
-  const [allShapes, setAllShapes] = useState<AllShapes[]>([]);
-  const [changeState, setchangeState] = useState<number>(0);
-
-  // console.log(allShapes);
-  useEffect(() => {
-    const getData = () => {
-      fetch('http://localhost:3000/data')
-        .then((res) => res.json())
-        .then((data) => setAllShapes(data))
-        .catch(() => console.log('Error'));
-    };
-    console.log(changeState);
-    
-    getData();
-  }, [changeState]);
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log(socket.id, 'Connected');
-    });
-    socket.on('recieverCanvaData', (data) => {
-      setAllShapes((prev) => [...prev, data]);
-    });
-
-    () => {
-      socket.off('connect');
-      socket.off('recieverCanvaData');
-      socket.disconnect();
-    };
-  }, []);
 
   const stageRef = useRef<any>(null);
   const updateRef = useExportImage((stage) => stage.updateRef);
@@ -80,7 +49,6 @@ const Whiteboard = () => {
     updateAction('Cursor');
     socket.emit('senderCanvaData', allShapes[allShapes.length - 1]);
     // console.log(circles);
-    setchangeState((prev) => prev + 1);
   }, [updateAction, action, allShapes]);
 
   const currentShapeRef = useRef<string>();

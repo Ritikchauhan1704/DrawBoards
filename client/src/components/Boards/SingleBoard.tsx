@@ -25,7 +25,7 @@ function SingleBoard() {
       {/* <div onClick={onBgClick}> */}
       <Panel />
       {/* </div> */}
-      <Whiteboard />
+      {/* <Whiteboard /> */}
       {room && (
         <div className="absolute top-36 right-80  h-[70%] w-1/2 flex flex-col border shadow-md py-1 px-2 justify-center items-center mx-auto rounded-lg bg-white">
           <button

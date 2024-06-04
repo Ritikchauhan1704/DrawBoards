@@ -7,12 +7,14 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
+import SingleBoard from './components/Boards/SingleBoard.tsx';
+import MultiBoard from './components/Boards/MultiBoard.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
-      <Route path="" element={<App />} />
-      <Route path="/:id" element={<App />} />
+    <Route path="/" element={<App />}>
+      <Route path="" element={<SingleBoard />} />
+      <Route path="/:id" element={<MultiBoard />} />
     </Route>
   )
 );

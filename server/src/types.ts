@@ -1,6 +1,6 @@
 type Shape = {
   id: string;
-  type:string;
+  type: string;
   color: string;
   x?: number;
   y?: number;

@@ -2,18 +2,18 @@ import {useEffect, useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
 import {useNavigate} from 'react-router-dom';
 import socket from '../../socket/socket';
-import { useRoom } from '../../store/store';
+import {useRoom} from '../../store/store';
 
 const JoinRoom = () => {
   const [roomId, setRoomId] = useState<string>('');
   const [name, setName] = useState('');
 
-  const updateRoom=useRoom((state)=>state.updateRoom)
+  const updateRoom = useRoom((state) => state.updateRoom);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const roomData = {
       name,
       roomId,
@@ -21,7 +21,7 @@ const JoinRoom = () => {
       host: false,
       presenter: false,
     };
-    updateRoom(null)
+    updateRoom(null);
     navigate(`/${roomId}`);
     socket.emit('userJoined', roomData);
     // console.log(roomData);

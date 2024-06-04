@@ -5,13 +5,12 @@ import toast from 'react-hot-toast';
 import {ClipboardText} from '@phosphor-icons/react';
 import {useNavigate} from 'react-router-dom';
 import socket from '../../socket/socket';
-import { useRoom } from '../../store/store';
-
+import {useRoom} from '../../store/store';
 
 const CreateRoom = () => {
   const [roomId, setRoomId] = useState<string>(uuidv4());
   const [name, setName] = useState('');
-  const updateRoom=useRoom((state)=>state.updateRoom)
+  const updateRoom = useRoom((state) => state.updateRoom);
 
   const navigate = useNavigate();
 
@@ -24,10 +23,10 @@ const CreateRoom = () => {
       host: true,
       presenter: true,
     };
-    updateRoom(null)
+    updateRoom(null);
     navigate(`/${roomId}`);
     socket.emit('userJoined', roomData);
-    // console.log(roomData);
+    console.log("joined",roomData);
   };
   useEffect(() => {
     socket.on('userIsJoined', (data) => {

@@ -12,6 +12,7 @@ import {Link} from 'react-router-dom';
 import {useExportImage, useImportImage, useRoom} from '../../../store/store';
 
 const SideBar = () => {
+
   const updateImage = useImportImage((state) => state.updateImage);
   const onImportImage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +48,6 @@ const SideBar = () => {
     downloadURI(dataUri, 'project.png');
   }, [stageRef]);
 
-  // const liveCollab = useCallback(() => {}, []);
   const updateRoom=useRoom(stage=>stage.updateRoom)
   return (
     <div className="absolute z-10 flex flex-col border shadow-md rounded-lg w-[75%] sm:w-[50%] md:w-[35%] lg:w-[20%] items-start p-4 m-3 bg-white">
@@ -91,6 +91,8 @@ const SideBar = () => {
         <Trash size={20} />
         Reset
       </button>
+
+      {/* line break */}
       <div className=" h-[1px] w-full rounded-md my-2 bg-slate-100 "></div>
 
       {/* Social Links */}

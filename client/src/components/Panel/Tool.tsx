@@ -1,14 +1,17 @@
+import { Icon } from '@phosphor-icons/react';
 import {cn} from '../../libs/utils';
 import {useToolStore} from '../../store/store';
 
 interface ToolProps {
-  icon: any;
+  icon: Icon;
   onClick: () => void;
 }
 const Tool = ({icon: Icon, onClick}: ToolProps) => {
   const action = useToolStore((state) => state.action);
 
   return (
+
+    // onclick change bg color of btn
     <button
       className={cn('p-3 rounded-lg ', {
         'bg-[#E0DFFF]': action === Icon.displayName,
